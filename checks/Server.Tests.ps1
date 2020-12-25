@@ -1,6 +1,8 @@
 $filename = $MyInvocation.MyCommand.Name.Replace(".Tests.ps1", "")
 . $PSScriptRoot/../internal/assertions/Server.Assertions.ps1
 
+# follow the guidance in Instance.Assertions to add new checks
+
 $Tags = Get-CheckInformation -Check $Check -Group Server -AllChecks $AllChecks -ExcludeCheck $ChecksToExclude
 if($IsLinux){
 Write-PSFMessage "We cannot run any of the Server tests from linux at the moment" -Level Warning
@@ -12,14 +14,14 @@ Return
         Context "Testing Server Power Plan Configuration on $psitem" {
             It "PowerPlan is High Performance on $psitem" {
                 Assert-PowerPlan -AllServerInfo $AllServerInfo
-            }       
+            }
         }
     }
     Describe "SPNs" -Tags SPN, $filename {
         Context "Testing SPNs on $psitem" {
             $computername = $psitem
             @($AllServerInfo.SPNs).ForEach{
-                It "$computername should have a SPN $($psitem.RequiredSPN) for $($psitem.InstanceServiceAccount)" {
+                It "There should be an SPN $($psitem.RequiredSPN) for $($psitem.InstanceServiceAccount) on $computername" {
                     Assert-SPN -SPN $psitem
                 }
             }
@@ -31,7 +33,7 @@ Return
         Context "Testing Disk Space on $psitem" {
             @($AllServerInfo.DiskSpace).ForEach{
                 It "$($psitem.Name) with $($psitem.PercentFree)% free should be at least $free% free on $($psitem.ComputerName)" {
-                    Assert-DiskSpace -Disk $psitem 
+                    Assert-DiskSpace -Disk $psitem
                 }
             }
         }
@@ -61,16 +63,37 @@ Return
     }
 
     Describe "Disk Allocation Unit" -Tags DiskAllocationUnit, Medium, $filename {
-        Context "Testing disk allocation unit on $psitem" {
-            $computerName = $psitem
-            $excludedisks = Get-DbcConfigValue policy.server.excludeDiskAllocationUnit
-            @($AllServerInfo.DiskAllocation).Where{$psitem.IsSqlDisk -eq $true}.ForEach{
-                if($Psitem.Name -in $excludedisks){
-                    $exclude = $true
+        if($IsCoreCLR){
+            Context "Testing disk allocation unit on $psitem" {
+                It "Can't run this check on Core on $psitem" -Skip {
+                    $true | Should -BeTrue
                 }
-                It "$($Psitem.Name) Should be set to 64kb on $computerName" -Skip:$exclude {
-                    Assert-DiskAllocationUnit -DiskAllocationObject $Psitem
+            }
+        }
+        else {
+            Context "Testing disk allocation unit on $psitem" {
+                $computerName = $psitem
+                $excludedisks = Get-DbcConfigValue policy.server.excludeDiskAllocationUnit
+                @($AllServerInfo.DiskAllocation).Where{$psitem.IsSqlDisk -eq $true}.ForEach{
+                    if($Psitem.Name -in $excludedisks){
+                        $exclude = $true
+                    }
+                    else {
+                        $exclude = $false
+                    }
+                    It "$($Psitem.Name) Should be set to 64kb on $computerName" -Skip:$exclude {
+                        Assert-DiskAllocationUnit -DiskAllocationObject $Psitem
+                    }
                 }
+            }
+        }
+    }
+
+    Describe "Non Standard Port" -Tags NonStandardPort, Medium, CIS, $filename {
+        $skip = Get-DbcConfigValue skip.security.nonstandardport
+        Context "Checking SQL Server ports on $psitem" {
+            It  "No SQL Server Instances should be configured with port 1433 on $psitem" -skip:$skip {
+                Assert-NonStandardPort -AllServerInfo $AllServerInfo
             }
         }
     }

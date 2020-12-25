@@ -3,11 +3,12 @@ function Get-CheckInformation {
     Param($Group, $Check, $AllChecks ,$ExcludeCheck)
     ## need to reset the variable here
     $script:localapp = Get-DbcConfigValue -Name app.localapp
-    $GroupChecksConfig = (Get-DbcCheck).Where{$_.Group -eq $Group}
+    $GroupChecksConfig = Get-DbcCheck -Group $Group
     # Nothing if we exclude the group
     if ($ExcludeCheck -contains $Group) {Return}
     # Create an array of tags for the group except the Group Name
     #It's a bit clubnky but it works
+    # This will create a list of all the tags for the group that has been specified ( so the instance checks or the database checks for example)
     $GroupChecks = @()
     @($GroupChecksConfig.AllTags).foreach{
         @($psitem.Split(',')).ForEach{
@@ -32,7 +33,7 @@ function Get-CheckInformation {
     }
 
     ## OK - Now we can return all of the tags for all fo the checks whether they are specified individually, by group, in the Check parameter or not specified and included by the config as either a group or an individual tag (Which is what I want!)
-    
+
     $CheckInfo = @()
     if(($Check -eq $Group) -or ($Check -contains $Group) -or ($AllChecks)){
         $CheckInfo = $GroupChecks
@@ -40,18 +41,21 @@ function Get-CheckInformation {
     else{
         @($Check).ForEach{
             if($GroupChecks -contains $psitem){
-                $CheckInfo += $psitem
+    ## BUT - This falls flat when you use a tag for a number of Checks that is not a group (like CIS) in that case all you get in $CheckInfo is CIS and not the relevant unique tags
+                @(Get-DbcCheck -Tag $psitem).ForEach{
+                    $CheckInfo += $psitem.UniqueTag
+                }
             }
         }
     }
-    Return $CheckInfo 
+    Return $CheckInfo
 }
 
 # SIG # Begin signature block
 # MIINEAYJKoZIhvcNAQcCoIINATCCDP0CAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
 # gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
-# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUOkgECV5AGvCwzwpKIDidk68g
-# 8ligggpSMIIFGjCCBAKgAwIBAgIQAsF1KHTVwoQxhSrYoGRpyjANBgkqhkiG9w0B
+# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUb7Xe99cKDYQhSmLwA7GVuxpD
+# O2OgggpSMIIFGjCCBAKgAwIBAgIQAsF1KHTVwoQxhSrYoGRpyjANBgkqhkiG9w0B
 # AQsFADByMQswCQYDVQQGEwJVUzEVMBMGA1UEChMMRGlnaUNlcnQgSW5jMRkwFwYD
 # VQQLExB3d3cuZGlnaWNlcnQuY29tMTEwLwYDVQQDEyhEaWdpQ2VydCBTSEEyIEFz
 # c3VyZWQgSUQgQ29kZSBTaWduaW5nIENBMB4XDTE3MDUwOTAwMDAwMFoXDTIwMDUx
@@ -111,11 +115,11 @@ function Get-CheckInformation {
 # EyhEaWdpQ2VydCBTSEEyIEFzc3VyZWQgSUQgQ29kZSBTaWduaW5nIENBAhACwXUo
 # dNXChDGFKtigZGnKMAkGBSsOAwIaBQCgeDAYBgorBgEEAYI3AgEMMQowCKACgACh
 # AoAAMBkGCSqGSIb3DQEJAzEMBgorBgEEAYI3AgEEMBwGCisGAQQBgjcCAQsxDjAM
-# BgorBgEEAYI3AgEVMCMGCSqGSIb3DQEJBDEWBBSZP6fmUPlBBkNTLJoQl+74k94Y
-# ojANBgkqhkiG9w0BAQEFAASCAQA5xVDr67dw13AANEsqIGrSLxCBEjPqQEf0NhvY
-# pJykkvWGIRqxih9soqbNtThgZACKVSz8P2ZGs84bIsgSJZ+qln92a9PemamAcXIb
-# aqdY3ilv4Oxl93lOCmIlvV4F6UpX9VWiwSIdamxEQL8qAZhQ23x1oaa/vy+DbHNG
-# Nal8mOeptCE7OLObCgT1kqniTnRloHPvBJcOplLFElTrBHfxFpuhl2AmGZHYnFKw
-# Hsv/9qOKcuiA1twpuEF6v/1PKvzLAK4pYUkQRib5Taqwp2rw8QLuMDlsbYjjDqZ6
-# YHT0oNMiY1rhfThkWtOfvAzWfWTuHzuXe63zezrz+ugAn67J
+# BgorBgEEAYI3AgEVMCMGCSqGSIb3DQEJBDEWBBS0Jl/mFVoeWuv7lxKDeeVAXzM7
+# /jANBgkqhkiG9w0BAQEFAASCAQB/UhD2mtAuccy4MtMMu4QYH9tMUsQ7y3ea0adX
+# FDp6Ql2zWswo29Tc1LUjXcLLuH9hHy4r+pDheKKnPqo33L9r1HWqDi23noVUn/r4
+# EdapCkfNISgGfpiGzjuATDkpYjvsePGJBgyhDQvSfP2ORFUzVj/qe12jGgFQe81m
+# C4aU7ylTEaK7fJT0WUpTc4xbP/OW6q1K/0ldYHAimzSI2BqQ345v2NY6MhhPMbaj
+# ETC0AA880BkH5FMRmNRwYzB8KBSrY2jgVKk6b+2u70y1auTXJf/AiAygRHoP5sQt
+# 6h7G6EtF6XEhYT2i3LhSSsZ3oAICq4ayluV4eM7Fv2iKmWMw
 # SIG # End signature block

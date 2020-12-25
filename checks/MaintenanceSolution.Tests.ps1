@@ -22,10 +22,10 @@ $SysFullJobName = Get-DbcConfigValue ola.JobName.SystemFull
 $UserFullJobName = Get-DbcConfigValue ola.JobName.UserFull
 $UserDiffJobName = Get-DbcConfigValue ola.JobName.UserDiff
 $UserLogJobName = Get-DbcConfigValue ola.JobName.UserLog
-$CommandLogJobName = Get-DbcConfigValue ola.JobName.CommandLogCleanup 
+$CommandLogJobName = Get-DbcConfigValue ola.JobName.CommandLogCleanup
 $SysIntegrityJobName = Get-DbcConfigValue ola.JobName.SystemIntegrity
-$UserIntegrityJobName = Get-DbcConfigValue ola.JobName.UserIntegrity 
-$UserIndexJobName = Get-DbcConfigValue ola.JobName.UserIndex 
+$UserIntegrityJobName = Get-DbcConfigValue ola.JobName.UserIntegrity
+$UserIndexJobName = Get-DbcConfigValue ola.JobName.UserIndex
 $OutputFileJobName = Get-DbcConfigValue ola.JobName.OutputFileCleanup
 $DeleteBackupJobName = Get-DbcConfigValue ola.JobName.DeleteBackupHistory
 $PurgeBackupJobName = Get-DbcConfigValue ola.JobName.PurgeBackupHistory
@@ -127,7 +127,7 @@ Describe "Ola - $UserDiffJobName" -Tags UserDiff, OlaJobs, $filename {
         $Retention = Get-DbcConfigValue policy.ola.UserDiffretention
 
         Context  "Is job enabled on $psitem" {
-            It "$UserDiffJobName should be enabled - $Enabled on $psitem " {
+            It "$UserDiffJobName should be enabled - $Enabled on $psitem" {
                 $job.IsEnabled | Should -Be $Enabled -Because "If the $UserDiffJobName job is not enabled it will not run"
             }
         }
@@ -403,7 +403,7 @@ Describe "Ola - $PurgeBackupJobName" -Tags PurgeJobHistory, OlaJobs, $filename {
             It "$PurgeBackupJobName should be scheduled - $Scheduled on $psitem" {
                 $job.HasSchedule | Should -Be $Scheduled -Because "If the $PurgeBackupJobName job is not scheduled it will not run"
             }
-            It "$($PurgeBackupJobName) schedules should be enabled - $Scheduled" {
+            It "$($PurgeBackupJobName) schedules should be enabled - $Scheduled on $psitem" {
                 $results = ($job.JobSchedules | Where-Object IsEnabled | Measure-Object).Count -gt 0
                 $results | Should -BeGreaterThan 0 -Because "If the schedule is not enabled the $PurgeBackupJobName job will not run"
             }

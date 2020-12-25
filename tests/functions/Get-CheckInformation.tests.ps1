@@ -19,7 +19,7 @@ Describe "Testing Get-CheckInformation" -Tag Get-CheckInformation, Unittest {
     }
     Context "Output" {
         $results = (Get-Content $ModuleBase\get-check.json) -join "`n"| ConvertFrom-Json
-        Mock Get-DbcCheck {$results}
+        Mock Get-DbcCheck {$results.Where{$_.Group -eq $Group}} -ParameterFilter {$Group -and $Group -in ('Server','Database')}
         It "Should Return All of the checks for a group when the Check equals the group and nothing excluded" {
             Get-CheckInformation -Group Server -Check Server | Should -Be 'PowerPlan', 'InstanceConnection', 'Connectivity', 'SPN', 'DiskCapacity', 'Storage', 'DISA', 'PingComputer', 'CPUPrioritisation', 'DiskAllocationUnit' -Because 'When the Check is specified and is a group it should return all of the tags for that group and not the groupname if nothing is exclueded'
         }
@@ -32,11 +32,11 @@ Describe "Testing Get-CheckInformation" -Tag Get-CheckInformation, Unittest {
         It "Should Return two checks for a group when two unique tags are specified and nothing excluded" {
             Get-CheckInformation -Group Server -Check SPN,InstanceConnection | Should -Be  'SPN', 'InstanceConnection' -Because 'When a Check is specified it should return just that check'
         }
-        It "Should return a none-unique tag if a none-unique tag is specified and nothing is excluded"{
-            Get-CheckInformation -Group Database -Check LastBackup | Should -Be 'LastBackup' -Because 'When a none-unique tag is specified it should return just that tag'
+        It "Should return a the unique tags for the none-unique tag if a none-unique tag is specified and nothing is excluded"{
+            Get-CheckInformation -Group Database -Check LastBackup | Should -Be 'TestLastBackup', 'TestLastBackupVerifyOnly', 'LastFullBackup', 'LastDiffBackup', 'LastLogBackup' -Because 'When a none-unique tag is specified it should return all of the unique tags'
         }
-        It "Should return two none-unique tags if two none-unique tags are specified and nothing is excluded"{
-            Get-CheckInformation -Group Database -Check LastBackup, DISA | Should -Be 'LastBackup','DISA' -Because 'When a none-unique tag is specified it should return just that tag'
+        It "Should return the unique tags for the none-unique tags if two none-unique tags are specified and nothing is excluded"{
+            Get-CheckInformation -Group Database -Check LastBackup, MaxDop  | Should -Be 'TestLastBackup', 'TestLastBackupVerifyOnly', 'LastFullBackup', 'LastDiffBackup', 'LastLogBackup', 'MaxDopDatabase', 'MaxDopInstance' -Because 'When a none-unique tag is specified it should return all of the unique tags'
         }
         It "Should Return All of the checks for a group except the excluded ones when the Check equals the group and one check is excluded" {
             Get-CheckInformation -Group Server -Check Server -ExcludeCheck PowerPlan | Should -Be  'InstanceConnection', 'Connectivity', 'SPN', 'DiskCapacity', 'Storage', 'DISA', 'PingComputer', 'CPUPrioritisation', 'DiskAllocationUnit' -Because 'When the Check is specified and is a group it should return all of the tags for that group except the excluded one and not the groupname'
@@ -63,8 +63,8 @@ Describe "Testing Get-CheckInformation" -Tag Get-CheckInformation, Unittest {
 # SIG # Begin signature block
 # MIINEAYJKoZIhvcNAQcCoIINATCCDP0CAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
 # gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
-# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUXhVUv/j491RrTD+1NkCxo9K4
-# SkigggpSMIIFGjCCBAKgAwIBAgIQAsF1KHTVwoQxhSrYoGRpyjANBgkqhkiG9w0B
+# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQU/QO1w1t2IvaGC48k1oxNvLTw
+# ihugggpSMIIFGjCCBAKgAwIBAgIQAsF1KHTVwoQxhSrYoGRpyjANBgkqhkiG9w0B
 # AQsFADByMQswCQYDVQQGEwJVUzEVMBMGA1UEChMMRGlnaUNlcnQgSW5jMRkwFwYD
 # VQQLExB3d3cuZGlnaWNlcnQuY29tMTEwLwYDVQQDEyhEaWdpQ2VydCBTSEEyIEFz
 # c3VyZWQgSUQgQ29kZSBTaWduaW5nIENBMB4XDTE3MDUwOTAwMDAwMFoXDTIwMDUx
@@ -124,11 +124,11 @@ Describe "Testing Get-CheckInformation" -Tag Get-CheckInformation, Unittest {
 # EyhEaWdpQ2VydCBTSEEyIEFzc3VyZWQgSUQgQ29kZSBTaWduaW5nIENBAhACwXUo
 # dNXChDGFKtigZGnKMAkGBSsOAwIaBQCgeDAYBgorBgEEAYI3AgEMMQowCKACgACh
 # AoAAMBkGCSqGSIb3DQEJAzEMBgorBgEEAYI3AgEEMBwGCisGAQQBgjcCAQsxDjAM
-# BgorBgEEAYI3AgEVMCMGCSqGSIb3DQEJBDEWBBRyfeyWSBn3UgHrq4GQp8IGlzkr
-# fzANBgkqhkiG9w0BAQEFAASCAQASTt9GJUwsQIyxC3yMAW1hPORn+vPrG6zfoQOx
-# 83C2G+7qXzn2Bli+yU/Hon5e1JJBA5BNP/WV0imbRDJYcLqX+ULLbALtwYN0ukGG
-# 4J15YjTyRHM2baYUttSbDUowfaOwwp1uoezl9dw6PhuBT4NlM/00IkS9A/80iJTi
-# pJh7wPjg/3gHsn8W/4ER9jifEaZ9UfuAK3bgv0ysKdWDblcxLUr3VcsCCAQbkSoA
-# vHxNtnKkAl7NM91FV1O/wc6W2WTMf7E3HIhVf5eO+AztiqcSFOz+8xuqvRxPRJon
-# G3lIbhxv+HheW1VcHrcP3lIdymw2/juGNdec8LXLPKLmcEwg
+# BgorBgEEAYI3AgEVMCMGCSqGSIb3DQEJBDEWBBT/f5aMZz9Q/1Idd5KPTcOMvSRj
+# vzANBgkqhkiG9w0BAQEFAASCAQBig6LSjIhmtoxk9Aaz3f5L7LibHHQf5Nht8xZ1
+# ear+piGGYvKCA9oYQ9JgMlKaljsIBDyzLHp+61I3dDx+id/a52tOz382xZY011wv
+# mzx5S+fgkUCwQFdF4V93C1T8o+GH6IABFUl97gDyZDiBM+YS6xwr6mQvkAkM6bUh
+# 5I4+34W3+PwKZE+BSXV9vwaSlTpM7J5WQ48pkuhx5Y9G9QqKwhTnABj8lyvewjlt
+# G6EUcZhgLJVOkFpEJdUz6pcgkYwx/9m7j1uG5MDMOdRS0Nhw8EXoVvZZdvyN9Tdf
+# M2y2sO4xvt8ScdWvV0kzZ2PhEUhK793AgcTJWOrRVDc5HNJM
 # SIG # End signature block

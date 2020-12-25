@@ -1,11 +1,10 @@
-$commandname = $MyInvocation.MyCommand.Name.Replace(".Tests.ps1", "")
 Remove-Module dbachecks -ErrorAction SilentlyContinue
 Import-Module "$PSScriptRoot\..\..\dbachecks.psd1"
-Write-Host -Object "Running $PSCommandpath" -ForegroundColor Cyan
+
 . "$PSScriptRoot/../../internal/functions/Get-CheckFile.ps1"
 
 Describe "Testing Get-CheckFile function" {
-    Mock Get-ChildItem { 
+    Mock Get-ChildItem {
         return @(
             @{ Name = "One.Tests.ps1"; FullName = "C:\Checks\One.Tests.ps1" },
             @{ Name = "Two.Tests.ps1"; FullName = "C:\Checks\Two.Tests.ps1" },
@@ -15,7 +14,7 @@ Describe "Testing Get-CheckFile function" {
 
     Mock Get-Content {
         return "
-# some comments to start with 
+# some comments to start with
 
 Describe `"First fake check`" -Tags FirstCheck {
     Context `"Some context`" {
@@ -134,8 +133,8 @@ Describe `"Sixth fake check`" -Tags `"SixthCheck`" {
 # SIG # Begin signature block
 # MIINEAYJKoZIhvcNAQcCoIINATCCDP0CAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
 # gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
-# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUP6UYSSC0MnFRMFS5FhmpTw2/
-# RbugggpSMIIFGjCCBAKgAwIBAgIQAsF1KHTVwoQxhSrYoGRpyjANBgkqhkiG9w0B
+# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUEvVWSy+gQvt0tsmQfwVbN135
+# wU+gggpSMIIFGjCCBAKgAwIBAgIQAsF1KHTVwoQxhSrYoGRpyjANBgkqhkiG9w0B
 # AQsFADByMQswCQYDVQQGEwJVUzEVMBMGA1UEChMMRGlnaUNlcnQgSW5jMRkwFwYD
 # VQQLExB3d3cuZGlnaWNlcnQuY29tMTEwLwYDVQQDEyhEaWdpQ2VydCBTSEEyIEFz
 # c3VyZWQgSUQgQ29kZSBTaWduaW5nIENBMB4XDTE3MDUwOTAwMDAwMFoXDTIwMDUx
@@ -195,11 +194,11 @@ Describe `"Sixth fake check`" -Tags `"SixthCheck`" {
 # EyhEaWdpQ2VydCBTSEEyIEFzc3VyZWQgSUQgQ29kZSBTaWduaW5nIENBAhACwXUo
 # dNXChDGFKtigZGnKMAkGBSsOAwIaBQCgeDAYBgorBgEEAYI3AgEMMQowCKACgACh
 # AoAAMBkGCSqGSIb3DQEJAzEMBgorBgEEAYI3AgEEMBwGCisGAQQBgjcCAQsxDjAM
-# BgorBgEEAYI3AgEVMCMGCSqGSIb3DQEJBDEWBBTinQVRbgAYi+7fgBXBjLnBhrbH
-# ITANBgkqhkiG9w0BAQEFAASCAQBy72AxF8qiz8HDkGZ08tDTUMVvxtYAScluK+ye
-# KIEithWdItU95fGfGEELCR4z62Ux+IrA7M4FTC4OtZXZj04KWOX8GoCf+tpCcnJJ
-# LLKD4i+F7NF9/4d8YLi7djc80GljBsIRER8cazm76sQ4W6+r+cn+JziK9suYaFir
-# u8gZ2Q2YiKG8b5tsIe+VbbpLskdGfR//oResBzunMkbb914YlRoLSwre/nmrgiXf
-# qdair8WvMMZuHCSICpB1K6lNIbrfJwBQNnsjDz9fXQ5ZSRW+fC/WX6gpNNLVe8kr
-# a1bKxMA4+qkQhWcHjrGy/6wSSfzrMG+g2dwAY3JPne/vEhPR
+# BgorBgEEAYI3AgEVMCMGCSqGSIb3DQEJBDEWBBRTTyU4WE6SB0PPxqULWt3QOzSe
+# vDANBgkqhkiG9w0BAQEFAASCAQAcVYWr9PB+SwhN9enLdr2/knqP/NvEi7cId6bK
+# luTaPcx+JeM0Hwjk15Ct4ilpoVq321ITl9CmCZLGc6c+OC0F6PrAiWsf40LQX3h2
+# ytNN0oHDZTlw2EwO83zXwnFVPR1QjyyD+S7A6sN+Vx0ft5oRFF8pZPdK1STZB/h3
+# 80TDP5y2MyeAV9DXfu5NXCtElYiRxwWXzHwQU9CNn2MBEyIVWXo9D7/dxt+AxJ6Z
+# e+ClrTCh8vwEvSgrpJ5Oa3bH0oVFg6u03oavCe/iWMm/oMHuzjLjdTvDE/PpM2Wh
+# FkZhF5aifj++Ptxpv0I4HifhX5RMlUT/mX5qLpJeplVY9Yes
 # SIG # End signature block

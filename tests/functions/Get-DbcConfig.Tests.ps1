@@ -1,18 +1,21 @@
-﻿$commandname = $MyInvocation.MyCommand.Name.Replace(".Tests.ps1", "")
-Write-Host -Object "Running $PSCommandpath" -ForegroundColor Cyan
+﻿[cmdletbinding()]
+[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseDeclaredVarsMoreThanAssignments', '', Justification='Because they are used just doesnt see them')]
+Param()
+$commandname = $MyInvocation.MyCommand.Name.Replace(".Tests.ps1", "")
+
 . "$PSScriptRoot\..\constants.ps1"
 
-Describe "$commandname Integration Tests" -Tags "IntegrationTests" {
+Describe "$commandname Unit Tests" -Tags UnitTest {
     Context "Command executes properly and returns proper info" {
         BeforeAll {
             $results = Get-DbcConfig
             $specific = Get-DbcConfig -Name policy.database.autoclose
         }
-        
+
         It "returns a number of configs" {
             ($results).Count -gt 10 | Should -BeTrue
         }
-        
+
         It "returns a single bool" {
             $specific.Value -eq $true -or $specific.Value -eq $false | Should -BeTrue
         }
@@ -21,8 +24,8 @@ Describe "$commandname Integration Tests" -Tags "IntegrationTests" {
 # SIG # Begin signature block
 # MIINEAYJKoZIhvcNAQcCoIINATCCDP0CAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
 # gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
-# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQU9QglVMJN7FG748b1nB/AYBE5
-# wmOgggpSMIIFGjCCBAKgAwIBAgIQAsF1KHTVwoQxhSrYoGRpyjANBgkqhkiG9w0B
+# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUjnpD6usDE2Ytxn6EjA6yBB0a
+# LWGgggpSMIIFGjCCBAKgAwIBAgIQAsF1KHTVwoQxhSrYoGRpyjANBgkqhkiG9w0B
 # AQsFADByMQswCQYDVQQGEwJVUzEVMBMGA1UEChMMRGlnaUNlcnQgSW5jMRkwFwYD
 # VQQLExB3d3cuZGlnaWNlcnQuY29tMTEwLwYDVQQDEyhEaWdpQ2VydCBTSEEyIEFz
 # c3VyZWQgSUQgQ29kZSBTaWduaW5nIENBMB4XDTE3MDUwOTAwMDAwMFoXDTIwMDUx
@@ -82,11 +85,11 @@ Describe "$commandname Integration Tests" -Tags "IntegrationTests" {
 # EyhEaWdpQ2VydCBTSEEyIEFzc3VyZWQgSUQgQ29kZSBTaWduaW5nIENBAhACwXUo
 # dNXChDGFKtigZGnKMAkGBSsOAwIaBQCgeDAYBgorBgEEAYI3AgEMMQowCKACgACh
 # AoAAMBkGCSqGSIb3DQEJAzEMBgorBgEEAYI3AgEEMBwGCisGAQQBgjcCAQsxDjAM
-# BgorBgEEAYI3AgEVMCMGCSqGSIb3DQEJBDEWBBTlXqNfeEgukxdqc5QyzsDWBBV3
-# xzANBgkqhkiG9w0BAQEFAASCAQA1vKRt+Nc8iXHHfny+leQgI9HBmWkmrJ8nD6Yz
-# L4kTvmNrlj5efRSTtnW0cKo2MuCAikKmjRoelH7SkLbTdzQLo+UF8zprQPlfMko4
-# /xtm8WmPcLC8Ied6FCGs51dOkSo+XF8s15pktPhud++ALGMVFkwOk6vRNXQqfVBH
-# Cx+WseW/Mp0I43kZO200DSXUSwGpCGG2WS7qPUgoSSj4115c5v0Kmlozh25sluTS
-# qzpcvcfQ5zpCXRxcyYQymMuwqQhNJnTYNrwe+XucCHKUxAXTB8azzUqd4U3gW0BY
-# ayDuHetgxOBHwmxQQYHGGpuYJnOsOjXqMoyuJykZkl7Z/Zwl
+# BgorBgEEAYI3AgEVMCMGCSqGSIb3DQEJBDEWBBTQ/pUvmZstFa2qJx23JrbBAnX9
+# bjANBgkqhkiG9w0BAQEFAASCAQA9UOPnHcDxc+8e+zJLeopk2Mt/AhZBlhSr2NrE
+# V/vQCksOb4jVfQtv/wPFdU9+lGVarwNlJOa6xWiKq5C52XCTq3THvqqd01K4kkJH
+# H61jr5q0ylqeyhTDY6zfvft1nx+nVaR7goVaVPeGTeorvXgMwYNtFkatdP5C9ckI
+# eiAylh/Tz2D8i/vh50jTePwNCDw64gT+rYGyt1QCuNAqWKfAS8SvDSl6sWAYzhSC
+# oG4PD0Jx5dIEva7BwjuNrWPr/sV6AQHrI6AjUTZiW2VSUnM7vLfKvy798ZoV487G
+# 4PFgKfsZ1kSckUbDwgZtC03hCToprsh4vYIDcy9+PYxSB663
 # SIG # End signature block

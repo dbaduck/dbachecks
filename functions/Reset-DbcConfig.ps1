@@ -11,8 +11,8 @@ This can be used to get the dbachecks back to default state of configuration, or
 .PARAMETER Name
 Name of the configuration key.
 
-.EXAMPLE 
-Reset-DbcConfig 
+.EXAMPLE
+Reset-DbcConfig
 
 Resets all the configuration values for dbachecks.
 
@@ -32,7 +32,7 @@ function Reset-DbcConfig {
         [Parameter(Mandatory = $false)]
         [string[]]$Name
     )
-    process { 
+    process {
         if (!$Name) {
             # no name provided, get all known dbachecks settings
             $resolvedName = (Get-DbcConfig).Name
@@ -41,7 +41,7 @@ function Reset-DbcConfig {
             # wildcard is used, get only the matching settings
             $resolvedName = (Get-DbcConfig).Name | Where-Object { $psitem -like $Name }
         }
-        else { 
+        else {
             $resolvedName = $Name
         }
 
@@ -50,8 +50,8 @@ function Reset-DbcConfig {
             if (-not (Get-DbcConfig -Name $localName)) {
                 Stop-PSFFunction -FunctionName Reset-DbcConfig -Message "Setting named $localName does not exist. Use Get-DbcCheck to get the list of supported settings."
             }
-            else { 
-                Write-PSFMessage -FunctionName Reset-DbcConfig -Message "resetting $localName" 
+            else {
+                Write-PSFMessage -FunctionName Reset-DbcConfig -Message "resetting $localName"
                 Unregister-PSFConfig -Module dbachecks -Name $localName
                 [PSFramework.Configuration.ConfigurationHost]::Configurations.Remove("dbachecks.$localName") | Out-Null
             }
@@ -62,7 +62,7 @@ function Reset-DbcConfig {
 
         # display the new values
         @($resolvedName).ForEach{
-            Get-DbcConfig -Name $psitem 
+            Get-DbcConfig -Name $psitem
         }
     }
 }
@@ -70,8 +70,8 @@ function Reset-DbcConfig {
 # SIG # Begin signature block
 # MIINEAYJKoZIhvcNAQcCoIINATCCDP0CAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
 # gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
-# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQU28uPvzVhOTeaX++lIzLIBvjz
-# RkmgggpSMIIFGjCCBAKgAwIBAgIQAsF1KHTVwoQxhSrYoGRpyjANBgkqhkiG9w0B
+# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUNUBbq4EpBfs1joEMYSLCoPkb
+# zGGgggpSMIIFGjCCBAKgAwIBAgIQAsF1KHTVwoQxhSrYoGRpyjANBgkqhkiG9w0B
 # AQsFADByMQswCQYDVQQGEwJVUzEVMBMGA1UEChMMRGlnaUNlcnQgSW5jMRkwFwYD
 # VQQLExB3d3cuZGlnaWNlcnQuY29tMTEwLwYDVQQDEyhEaWdpQ2VydCBTSEEyIEFz
 # c3VyZWQgSUQgQ29kZSBTaWduaW5nIENBMB4XDTE3MDUwOTAwMDAwMFoXDTIwMDUx
@@ -131,11 +131,11 @@ function Reset-DbcConfig {
 # EyhEaWdpQ2VydCBTSEEyIEFzc3VyZWQgSUQgQ29kZSBTaWduaW5nIENBAhACwXUo
 # dNXChDGFKtigZGnKMAkGBSsOAwIaBQCgeDAYBgorBgEEAYI3AgEMMQowCKACgACh
 # AoAAMBkGCSqGSIb3DQEJAzEMBgorBgEEAYI3AgEEMBwGCisGAQQBgjcCAQsxDjAM
-# BgorBgEEAYI3AgEVMCMGCSqGSIb3DQEJBDEWBBRgASfkB7DnI2NnlMp0rXsD1Wgo
-# mzANBgkqhkiG9w0BAQEFAASCAQAYu6p2dOaxYppXKczrwbO5+5Jd2b/ScwJRYLbj
-# FLOHJ4f313kF5W9RLHrO6Pb692VVG7aR4gCUWtS72b/vvVqPEz4D/V0tLNGvmhwK
-# hJV1Ll/YtEu//0kMfqUpyjNXZOJFXEgAYSLybeZt7W0HVrpaGq3Az5Yw9gia+QR9
-# cjelQ9CnqPJ4wvlW3nUScag+M5Uc6w6QQ3ZPFTJm6x6DAftfMGyNlF6rIuct0Bgr
-# //V6370wPd3rsLrBdu5NKS/fDDgXhlU9aAwQGcjJk9GPuM8nc84jvzy/T/9MhiQb
-# NN0eg2cY4cO2SbljDQcuP81JzVoGBajwPGWYpQLC17Sh1Guz
+# BgorBgEEAYI3AgEVMCMGCSqGSIb3DQEJBDEWBBR3l3SiI0NPBR4CWmM9fmSkSKLy
+# GDANBgkqhkiG9w0BAQEFAASCAQAr7bYA6OAueFQ2dn1dUwQGhbFE0juwzfe4oO24
+# fZo+mG/t/FO/3CAK0HLcDXRlZ6DatOFBiAXg1TVQVB65Sj8kTaYK6c3RJvOh01O7
+# eARSCKMI3fpNVFJ3So1GmueVwI5h63b6uwUJcWc3aWEY0rBmS3qkZBuLQh/dU+OU
+# eTkBCLpMYrwz9O5xDsxbF6ff9RmF54vEAI056l8RkEVw/zqvRg5NmhFeMmHhA4lW
+# zzdfwmL+cwj5wkPOtWPDYOV6/iE3+cUN7WvIvL8pJ83Uw+FWDNS0/fO37L7fqNGu
+# j66L2DwWGyn/BoQ2KjG6HcRgNVe4VzCoZGdauvRrCEXRoJdj
 # SIG # End signature block

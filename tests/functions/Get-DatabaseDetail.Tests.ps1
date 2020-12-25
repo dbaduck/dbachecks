@@ -1,8 +1,11 @@
+[cmdletbinding()]
+[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseDeclaredVarsMoreThanAssignments', '', Justification='Because they are used just doesnt see them')]
+Param()
 $commandname = $MyInvocation.MyCommand.Name.Replace(".Tests.ps1", "")
 Remove-Module dbachecks -ErrorAction SilentlyContinue
 Remove-Module dbatools  -ErrorAction SilentlyContinue
 Import-Module "$PSScriptRoot\..\..\dbachecks.psd1"
-Write-Host -Object "Running $PSCommandpath" -ForegroundColor Cyan
+
 . "$PSScriptRoot/../../internal/functions/Get-DatabaseDetail.ps1"
 
 Describe "Integration testing of $commandname" -Tags SqlIntegrationTests,IntegrationTests, Integration {
@@ -32,7 +35,7 @@ Describe "Integration testing of $commandname" -Tags SqlIntegrationTests,Integra
             It "Execution of Get-DatabaseDetail should not throw exceptions" {
                 { Get-DatabaseDetail -SqlInstance $psitem } | Should -Not -Throw -Because "we expect data not exceptions"
             }
-  
+
             It "Get-DatabaseDetail should return at least the system databases" {
                 $script:databases.Count | Should -BeGreaterOrEqual 4 -Because "we expect at least to have the system databases on any instance"
             }
@@ -49,7 +52,7 @@ Describe "Integration testing of $commandname" -Tags SqlIntegrationTests,Integra
                 if ($expectedProperties[$property] -eq $null) {
                     continue
                 }
-                
+
                 It "$property property should be of type $($expectedProperties[$property].ToString())" {
                     $script:databases."$property".ForEach{
                         $psitem | Should -BeOfType ($expectedProperties[$property])
@@ -63,8 +66,8 @@ Describe "Integration testing of $commandname" -Tags SqlIntegrationTests,Integra
 # SIG # Begin signature block
 # MIINEAYJKoZIhvcNAQcCoIINATCCDP0CAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
 # gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
-# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUtE4r+cSnGTt2copms+TuAHCK
-# IhGgggpSMIIFGjCCBAKgAwIBAgIQAsF1KHTVwoQxhSrYoGRpyjANBgkqhkiG9w0B
+# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUr1kRyK6nxU+bdSNMAb3cXwbX
+# HoagggpSMIIFGjCCBAKgAwIBAgIQAsF1KHTVwoQxhSrYoGRpyjANBgkqhkiG9w0B
 # AQsFADByMQswCQYDVQQGEwJVUzEVMBMGA1UEChMMRGlnaUNlcnQgSW5jMRkwFwYD
 # VQQLExB3d3cuZGlnaWNlcnQuY29tMTEwLwYDVQQDEyhEaWdpQ2VydCBTSEEyIEFz
 # c3VyZWQgSUQgQ29kZSBTaWduaW5nIENBMB4XDTE3MDUwOTAwMDAwMFoXDTIwMDUx
@@ -124,11 +127,11 @@ Describe "Integration testing of $commandname" -Tags SqlIntegrationTests,Integra
 # EyhEaWdpQ2VydCBTSEEyIEFzc3VyZWQgSUQgQ29kZSBTaWduaW5nIENBAhACwXUo
 # dNXChDGFKtigZGnKMAkGBSsOAwIaBQCgeDAYBgorBgEEAYI3AgEMMQowCKACgACh
 # AoAAMBkGCSqGSIb3DQEJAzEMBgorBgEEAYI3AgEEMBwGCisGAQQBgjcCAQsxDjAM
-# BgorBgEEAYI3AgEVMCMGCSqGSIb3DQEJBDEWBBQ4OO9al9bIr/M/VjLeeMIMvQHc
-# cjANBgkqhkiG9w0BAQEFAASCAQBOsgN4pzK5VXgoa9vvWBQ39biDZ9h1j9GKaIyP
-# ygYh2Q8aDZJfXpxgotadrA/8WFtEwqa8BMmmhPw8IyeAWlP3Tuxq0xe/6phDrnT6
-# +SXYMpHRJ34H7EdNwVsaSHYRhgeatUqmGYW+enbpG3jk0qonfAEl5MDmqC26OZ32
-# qKiWcB7Z4iPPUFVdEexrBhQ1rmcYhgYh303SMhPiAw+zDeDLycKBX+6V8QUztxyH
-# 4evAroX4JBEF4WidFJh+vi3HE/cfGBi7b009sUIKxxbgJbEolQVg2cbaGa67ULso
-# fgwiJji8OiVtLImc6pthb5AXwyeZJoTXIF4sY0FAMKg/zSEy
+# BgorBgEEAYI3AgEVMCMGCSqGSIb3DQEJBDEWBBRX4OtGxkPqKBADyCJ6DUBsCxOh
+# 7zANBgkqhkiG9w0BAQEFAASCAQBTlvO0xBAP8lRNwWvjId0aiqyJ1Su+c6UIIjEN
+# YNsyVHYEC6uEAh/pU/BWkcOTY2E3p+jMXSneWNzY4zs6BqiermaBjyU0S+VvRCbZ
+# uvUSOnLzgIRpxsYPGY+jzZhi7nhhkouLJoQXH7wR8VWtaCjQLkrdKkrrzLYmjD0y
+# 1l1j0MDrd8Dy0vsgRcEoxbGBIjAN1PINP0oH5LyFqNPmDf3vnM3M79bmqTZT41d1
+# UlG6Y6kd+AXzCkXJr3+bqknOanggaEUxqTKoYamkHvZz+5dVvu6eLhXMyJVTuyRo
+# hCOA5PM2+GIvos5ZJ1LfXRq1nM1BsO5H0UKkyAemFZr2KV9X
 # SIG # End signature block

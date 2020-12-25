@@ -11,7 +11,7 @@
     RootModule             = 'dbachecks.psm1'
 
     # Version number of this module.
-    ModuleVersion          = '1.2.9'
+    ModuleVersion          = '2.0.9'
 
     # ID used to uniquely identify this module
     GUID                   = '578c5d98-50c8-43a8-bdbb-d7159028d7ac'
@@ -23,13 +23,16 @@
     CompanyName            = 'SQL Community Collaborative'
 
     # Copyright statement for this module
-    Copyright              = '(c) 2018. All rights reserved.'
+    Copyright              = '(c) 2020. All rights reserved.'
 
     # Description of the functionality provided by this module
     Description            = 'SQL Server Infrastructure validation Tests to ensure that your SQL Server estate is and continues to be compliant with your requirements'
 
     # Minimum version of the Windows PowerShell engine required by this module
-    PowerShellVersion      = '5.0'
+    PowerShellVersion      = '5.1'
+
+    # Supported PSEditions
+    CompatiblePSEditions = 'Desktop', 'Core' # Cant put this in until a decision is made to make minimum version 5.1 :-(
 
     # Name of the Windows PowerShell host required by this module
     PowerShellHostName     = ''
@@ -48,9 +51,8 @@
 
     # Modules that must be imported into the global environment prior to importing this module
     RequiredModules        = @(
-        @{ ModuleName = 'Pester'; ModuleVersion = '4.7.1' },
-        @{ ModuleName = 'dbatools'; ModuleVersion = '1.0.23' }
-        @{ ModuleName = 'PSFramework'; ModuleVersion = '1.0.0' }
+        @{ ModuleName = 'dbatools'; ModuleVersion = '1.0.103' }
+        @{ ModuleName = 'PSFramework'; ModuleVersion = '1.1.59' }
     )
 
     # Assemblies that must be loaded prior to importing this module
@@ -86,21 +88,23 @@
         'Update-DbcPowerBiDataSource',
         'Get-DbcTagCollection',
         'Get-DbcCheck',
-        # 'Send-DbcMailMessage',
         'Clear-DbcPowerBiDataSource',
         'Save-DbcRequiredModules',
-        'Update-DbcRequiredModules'
+        'Update-DbcRequiredModules',
+        'Set-DbcFile',
+        'Convert-DbcResult',
+        'Write-DbcTable'
     )
 
     # Cmdlets to export from this module
-    CmdletsToExport        = '*'
+    CmdletsToExport        = @()
 
     # Variables to export from this module
     VariablesToExport      = '*'
 
     # Aliases to export from this module
     # Aliases are stored in dbachecks.psm1
-    AliasesToExport        = 'Update-Dbchecks'
+    AliasesToExport        = 'Update-Dbachecks'
 
     # List of all modules packaged with this module
     ModuleList             = @()
@@ -131,11 +135,22 @@
 
             # Release notes for this particular version of the module
             ReleaseNotes = "
-## Date 29th July 2019
-Thank you @TracyBoggiano
-Added tags for checks that will be part of CIS checks #642
-CIS project started
-Added check for default trace enabled #684
+## December 14th 2020
+
+Thank you tboggiano Browser check altered for instance count #758
+Thank you zikato - Fixing datafile auto growth #786
+Thank you fatherjack Typos #767
+Thank you tboggiano Query Store enabled and disabled test improvements #791
+Thank you relsna fixed issue with error log window #814
+Thank you @TheAntGreen Typos #815
+Thank you @TheAntGreen Add additional filter to filter out negative run_durations #816
+Thank you @TheAntGreen Add policy for additional excluded dbs from the SAFE CLR check #817
+Thank you @MikeyBronowski Fix the check for enabled alerts #819
+Thank you @MikeyBronowski Updating the link in documentation #820
+Thank you @mikedavem Updated HADR checks with additional checks #822
+Thank you @mikedavem Database backup diff check - fix issue #812 #824
+        
+##Latest
 
 Run Get-DbcReleaseNotes for all release notes
             "
